@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { Auth, Home, Projects } from "../pages";
+import { Auth, Home, Projects, Board } from "../pages";
 import PrivateRoute from "./PrivateRoute";
 
 export const AppRoutes = [
@@ -22,6 +22,14 @@ export const AppRoutes = [
                 path: 'projects',
                 element: <PrivateRoute component={<Projects />} />
             },
+            {
+                path: 'projects/:id',
+                element: <PrivateRoute component={<Board />} />
+            },
+            {
+                path: '*',
+                element: <>404 Not Found</>
+            }
         ]
     }
 ]
