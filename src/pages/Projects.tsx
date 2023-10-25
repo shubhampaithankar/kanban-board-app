@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { Table, TableHead, TableRow, TableCell, TableBody, Button, Grid, Typography } from '@mui/material';
-import { createProject, getUserProjects } from '../services/ApiService';
+import { Table, TableHead, TableRow, TableCell, TableBody, Button, Grid, Typography, TextField } from '@mui/material';
+import { getUserProjects } from '../services/ApiService';
 
 import useModal from '../hooks/useModal';
 import useAuth from '../hooks/useAuth';
@@ -62,15 +62,19 @@ export default function Projects() {
       <Table sx={{ border: 1 }}>
         <TableHead>
           <TableRow>
+            <TableCell>#</TableCell>
             <TableCell>Name</TableCell>
+            <TableCell>Description</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
         {
-          projects.length > 0 && projects.map((project: any) => (
+          projects.length > 0 && projects.map((project: any, index: number) => (
             <TableRow key={project._id}>
+              <TableCell>{index+1}</TableCell>
               <TableCell onClick={() => handleClick(project._id)}>{project.name}</TableCell>
+              <TableCell>{project.description}</TableCell>
               <TableCell>
                 <Button disabled={isLoading} variant="outlined">
                   Edit
@@ -86,39 +90,5 @@ export default function Projects() {
       </Table>
       </Grid>
     </Grid>
-  )
-}
-
-const CreateProjectModal = () => {
-
-  const [newProjectName, setNewProjectName] = useState('');
-  const { onClose } = useModal()
-
-  const createProjectMutation = useMutation(createProject, {
-    onSuccess: (response) => {
-      if (response.data.ack === 1) {
-        setNewProjectName('');
-        onClose()
-      }
-    },
-  })
-
-  const handleCreateProject = () => {
-    if (newProjectName) {
-      createProjectMutation.mutate(newProjectName);
-    }
-  }
-
-  return (
-    <>
-      <Typography variant="h5">Create New Project</Typography>
-      <input type="text" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} required />
-      <Button onClick={handleCreateProject} variant="contained">
-        Create
-      </Button>
-      <Button onClick={onClose} variant="outlined">
-        Cancel
-      </Button>
-    </>
   )
 }

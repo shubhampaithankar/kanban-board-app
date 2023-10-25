@@ -16,10 +16,8 @@ export default function Auth() {
     region: ''
   })
 
-  const navigate = useNavigate()
-
   const { setToken, isAuthenticated } = useAuth()
-
+  const navigate = useNavigate()
 
   const handleChange = (e: any) => {
     const { target: { name, value } } = e
@@ -56,8 +54,6 @@ export default function Auth() {
       navigate('/projects')
     }
   }, [isAuthenticated, navigate])
-
-  console.log(formData)
 
   return (
     <Grid container spacing={0} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100%', flexDirection: 'column' }}>
@@ -107,6 +103,7 @@ export default function Auth() {
                   type="date"
                   name='dob'
                   fullWidth
+                  InputLabelProps={{ shrink: true }}
                   value={formData.dob}
                   onChange={handleChange}
                   sx={{ margin: '0.25rem' }} required

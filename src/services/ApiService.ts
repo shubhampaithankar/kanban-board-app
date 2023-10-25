@@ -26,7 +26,7 @@ export const createProject = async (data: any) => (await apiInstance.post(API_UR
 export const updateProject = async (data: any) => (await apiInstance.post(API_URL + 'projects/update', data))
 export const deleteProject = async (data: any) => (await apiInstance.post(API_URL + 'projects/delete', data))
 
-export const getTasks = async () => (await apiInstance.get(API_URL + 'tasks/get'))
+export const getTasks = async (data: any) => (await apiInstance.post(API_URL + 'tasks/get', data))
 export const createTask = async (data: any) => (await apiInstance.post(API_URL + 'tasks/create', data))
 export const updateTask = async (data: any) => (await apiInstance.post(API_URL + 'tasks/update', data))
 export const deleteTask = async (data: any) => (await apiInstance.post(API_URL + 'tasks/delete', data))

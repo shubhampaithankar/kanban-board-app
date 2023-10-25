@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { AppBar, Button, ButtonGroup, Grid, Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
 
 export default function Navbar() {
-  const navigate = useNavigate()
   const { isAuthenticated, logoutUser } = useAuth()
+  const navigate = useNavigate()
 
   const handleClick = () => {
     if (isAuthenticated) {

@@ -18,8 +18,8 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Modal />
+            <Navbar />
             <Suspense fallback={<>Loading...</>}>
-              <Navbar />
               <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
                 <Routes />
               </Container>
