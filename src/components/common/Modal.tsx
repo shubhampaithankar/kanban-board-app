@@ -1,11 +1,17 @@
-import useModal from "../hooks/useModal";
-import { Grid, Modal as BaseModal, Typography } from '@mui/material';
+import { Grid, Typography, Modal as ReactModal } from '@mui/material';
+import useModal from "../../hooks/useModal";
+import { useEffect } from 'react';
 
 export default function Modal() {
     const { isOpen, modalData, onClose } = useModal()
+
+    useEffect(() => {
+        console.log(isOpen)
+    }, [isOpen])
+
     return (
         <>
-            <BaseModal onClose={onClose} open={isOpen}>
+            <ReactModal open={isOpen} onClose={onClose}>
                 <Grid container direction='column' justifyContent="center" alignItems="center">
                     <Grid item xs={4}>
                         <Typography variant="h1">
@@ -16,7 +22,7 @@ export default function Modal() {
                         { modalData.body }
                     </Grid>
                 </Grid>
-            </BaseModal>
+            </ReactModal>
         </>
     )
 }

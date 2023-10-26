@@ -6,20 +6,18 @@ import { Container } from '@mui/material';
 
 import Routes from './routes/Routes';
 
-import Modal from './components/Modal';
-import Navbar from './components/Navbar';
-import ErrorFallback from './components/ErrorFallBack';
+import { Loading, Modal, Navbar, Error } from './components/';
 
 function App() {
   const queryClient = new QueryClient()
   return (
     <>
-      <ErrorBoundary fallbackRender={({ error, resetErrorBoundary }) => (<ErrorFallback didCatch={!!error} error={error} resetErrorBoundary={resetErrorBoundary}/>)}>
+      <ErrorBoundary fallbackRender={({ error, resetErrorBoundary }) => (<Error didCatch={!!error} error={error} resetErrorBoundary={resetErrorBoundary}/>)}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <Modal />
             <Navbar />
-            <Suspense fallback={<>Loading...</>}>
+            <Suspense fallback={<Loading />}>
               <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
                 <Routes />
               </Container>

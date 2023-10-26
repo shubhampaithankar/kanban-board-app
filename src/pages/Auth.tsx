@@ -4,6 +4,8 @@ import { useMutation } from 'react-query';
 import { loginUser, registerUser } from '../services/ApiService';
 import useAuth from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import useModal from '../hooks/useModal';
+import { UserRegisterModal } from '../components/Modals';
 
 export default function Auth() {
 
@@ -19,21 +21,29 @@ export default function Auth() {
   const { setToken, isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
+  const { onOpen } = useModal()
+
   const handleChange = (e: any) => {
     const { target: { name, value } } = e
     setFormData(prev => ({ ...prev, [name]: value }))
   };
 
   const { isLoading, mutate } = useMutation(isRegistering ? registerUser : loginUser);
+  const clearForm = () => setFormData({ username: '', password: '', dob: '', email: '', region: '' })
 
   const handleSubmit = (e: any) => {
     e.preventDefault(); 
-    mutate(formData, {
+    const data = isRegistering ? formData : { username: formData.username, password: formData.password }
+    mutate(data, {
       onSuccess: (response) => {
         if (response?.data.ack === 1) {
           if (!isRegistering) {
             setToken(response?.data.token)
           } else {
+            onOpen({
+              title: 'Success',
+              body: <UserRegisterModal />
+            })
             setIsRegistering(false)
           }
         } else {
@@ -44,7 +54,7 @@ export default function Auth() {
         console.log(error)
       }, 
       onSettled: () => {
-        setFormData({ username: '', password: '', dob: '', email: '', region: '' })
+        clearForm()
       }
     })
   };
@@ -127,7 +137,7 @@ export default function Auth() {
         </form>
         <Typography variant="body2" sx={{ margin: '0.25rem' }}>
           { isRegistering ? "Already have an account?": "Don't have an account?" }
-          <Button disabled={isLoading} onClick={() => setIsRegistering(!isRegistering)}>
+          <Button disabled={isLoading} onClick={() => {setIsRegistering(!isRegistering); clearForm()}}>
             {isRegistering ? 'Login' : 'Register'}
           </Button>
         </Typography>

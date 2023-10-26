@@ -1,7 +1,7 @@
 import { Container, CssBaseline, Typography, Button } from "@mui/material";
 import { ErrorBoundaryContextType } from "react-error-boundary";
 
-export default function ErrorFallback({ error, resetErrorBoundary, didCatch }: ErrorBoundaryContextType) {
+export default function Error({ error, resetErrorBoundary, didCatch }: ErrorBoundaryContextType) {
   return (
     <Container maxWidth="md">
       <CssBaseline />

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { AppBar, Button, ButtonGroup, Grid, Typography } from '@mui/material'
-import useAuth from '../hooks/useAuth'
+import useAuth from '../../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 
 export default function Navbar() {
@@ -15,14 +15,13 @@ export default function Navbar() {
     }
   }
 
-  useEffect(() => {
-  }, [isAuthenticated])
+  useEffect(() => {}, [isAuthenticated])
 
   return (
     <AppBar style={{ height: '50px', position: 'sticky', backgroundColor: 'gray' }} variant='outlined' elevation={0}>
       <Grid container spacing={0} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'row' }}>
         <Grid item xs={6} sx={{ textAlign: 'center' }}>
-          <Typography onClick={() => navigate('/home')}>KanBan Board</Typography>
+          <Typography variant='h4' onClick={() => navigate('/home')}>KanBan Board</Typography>
         </Grid>
         <Grid item xs={6} sx={{ textAlign: 'center' }}>
           <ButtonGroup variant="contained" aria-label="outlined primary button group">

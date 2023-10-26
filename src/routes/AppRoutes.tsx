@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { Auth, Home, Projects, Board } from "../pages";
+import { Auth, Home, Projects, Board, Profile } from "../pages";
 import PrivateRoute from "./PrivateRoute";
 
 export const AppRoutes = [
@@ -17,6 +17,10 @@ export const AppRoutes = [
             {
                 path: 'auth',
                 element: <Auth />
+            },
+            {
+                path: 'profile',
+                element: <PrivateRoute component={<Profile />} />
             },
             {
                 path: 'projects',

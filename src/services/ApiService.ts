@@ -20,6 +20,7 @@ export const loginUser = async (data: any) => (await apiInstance.post(API_URL + 
 export const registerUser = async (data: any) => (await apiInstance.post(API_URL + 'auth/register', data))
 
 export const getUserDetails = async () => (await apiInstance.get(API_URL + 'user/get-user'))
+export const updateUser = async (data: any) => (await apiInstance.post(API_URL + 'user/update', data))
 
 export const getUserProjects = async () => (await apiInstance.get(API_URL + 'projects/get'))
 export const createProject = async (data: any) => (await apiInstance.post(API_URL + 'projects/create', data))
