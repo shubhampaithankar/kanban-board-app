@@ -5,18 +5,19 @@ import { createProject, createTask, deleteProject, deleteTask, updateProject, up
 import useModal from "../hooks/useModal";
 
 // Project Modals
-export const CreateProjectModal = () => {
+export const CreateProjectModal = ({ mutate }: any) => {
 
   const [formData, setFormData] = useState({
    name: '',
    description: ''
   });
-  const { onClose } = useModal()
+  const modal = useModal()
 
   const createProjectMutation = useMutation(createProject, {
     onSuccess: (response) => {
       if (response.data.ack === 1) {
-        onClose()
+        modal?.onClose()
+        mutate()
       } else {
         throw new Error(response.data.message)
       }
@@ -32,7 +33,6 @@ export const CreateProjectModal = () => {
 
   return (
     <>
-      <Typography variant="h5">Create New Project</Typography>
        <form onSubmit={handleSubmit} style={{ padding: '0.5rem' }}>
           <TextField
             label="Username"
@@ -57,7 +57,7 @@ export const CreateProjectModal = () => {
         <Button type='submit' variant="contained">
           Create
         </Button>
-        <Button onClick={onClose} variant="outlined">
+        <Button onClick={() => modal?.onClose()} variant="outlined">
           Cancel
         </Button>
       </form>
@@ -65,18 +65,19 @@ export const CreateProjectModal = () => {
   )
 }
 
-export const UpdateProjectModal = ({ project: { id, name, description }}: any) => {
+export const UpdateProjectModal = ({ project: { id, name, description }, mutate }: any) => {
 
   const [formData, setFormData] = useState({
    name,
    description
   });
-  const { onClose } = useModal()
+  const modal = useModal()
 
   const updateProjectMutation = useMutation(updateProject, {
     onSuccess: (response) => {
       if (response.data.ack === 1) {
-        onClose()
+        modal?.onClose()
+        mutate()
       } else {
         throw new Error(response.data.message)
       }
@@ -115,9 +116,9 @@ export const UpdateProjectModal = ({ project: { id, name, description }}: any) =
             sx={{ margin: '0.25rem' }} required
           />
         <Button type='submit' variant="contained">
-          Create
+          Delete
         </Button>
-        <Button onClick={onClose} variant="outlined">
+        <Button onClick={() => modal?.onClose()} variant="outlined">
           Cancel
         </Button>
       </form>
@@ -125,13 +126,14 @@ export const UpdateProjectModal = ({ project: { id, name, description }}: any) =
   )
 }
 
-export const DeleteProjectModal = ({ project: { id, name } }: any) => {
-  const { onClose } = useModal()
+export const DeleteProjectModal = ({ project: { id, name }, mutate }: any) => {
+  const modal = useModal()
 
   const deleteProjectMutation = useMutation(deleteProject, {
     onSuccess: (response) => {
       if (response.data.ack === 1) {
-        onClose()
+        modal?.onClose()
+        mutate()
       } else {
         throw new Error(response.data.message)
       }
@@ -146,7 +148,7 @@ export const DeleteProjectModal = ({ project: { id, name } }: any) => {
       <Button onClick={handleDeleteProject} variant="contained">
         Delete
       </Button>
-      <Button onClick={onClose} variant="outlined">
+      <Button onClick={() => modal?.onClose()} variant="outlined">
         Cancel
       </Button>
     </>
@@ -154,7 +156,7 @@ export const DeleteProjectModal = ({ project: { id, name } }: any) => {
 }
 
 // Task Modals 
-export const CreateTaskModal = () => {
+export const CreateTaskModal = ({ mutation }: any) => {
   const priorities = ['Low', 'Medium', 'High']
   const [formData, setFormData] = useState({
     title: '',
@@ -163,12 +165,13 @@ export const CreateTaskModal = () => {
     labels: [''],
     dueDate: ''
    });
-   const { onClose } = useModal()
+   const modal = useModal()
  
    const { mutate, isLoading } = useMutation(createTask, {
      onSuccess: (response) => {
        if (response.data.ack === 1) {
-         onClose()
+        modal?.onClose()
+         mutation()
        } else {
         throw new Error(response.data.message)
       }
@@ -226,6 +229,7 @@ export const CreateTaskModal = () => {
              name='dueDate'
              fullWidth
              value={formData.dueDate}
+             InputLabelProps={{ shrink: true }}
              onChange={handleChange}
              sx={{ margin: '0.25rem' }} required
              disabled={isLoading}
@@ -233,7 +237,7 @@ export const CreateTaskModal = () => {
          <Button type='submit' variant="contained" disabled={isLoading}>
            Create
          </Button>
-         <Button onClick={onClose} variant="outlined" disabled={isLoading}>
+         <Button onClick={() => modal?.onClose()} variant="outlined" disabled={isLoading}>
            Cancel
          </Button>
        </form>
@@ -241,15 +245,16 @@ export const CreateTaskModal = () => {
    )
 }
 
-export const UpdateTaskModal = ({ task }: any) => {
+export const UpdateTaskModal = ({ task, mutation }: any) => {
   const priorities = ['Low', 'Medium', 'High']
   const [formData, setFormData] = useState(task);
-   const { onClose } = useModal()
+   const modal = useModal()
  
    const { mutate, isLoading } = useMutation(updateTask, {
      onSuccess: (response) => {
        if (response.data.ack === 1) {
-         onClose()
+         modal?.onClose()
+         mutation()
        } else {
         throw new Error(response.data.message)
       }
@@ -306,6 +311,7 @@ export const UpdateTaskModal = ({ task }: any) => {
              type="date"
              name='dueDate'
              fullWidth
+             InputLabelProps={{ shrink: true }}
              value={formData.dueDate}
              onChange={handleChange}
              sx={{ margin: '0.25rem' }} required
@@ -314,7 +320,7 @@ export const UpdateTaskModal = ({ task }: any) => {
          <Button type='submit' variant="contained" disabled={isLoading}>
            Create
          </Button>
-         <Button onClick={onClose} variant="outlined" disabled={isLoading}>
+         <Button onClick={() => modal?.onClose()} variant="outlined" disabled={isLoading}>
            Cancel
          </Button>
        </form>
@@ -322,13 +328,14 @@ export const UpdateTaskModal = ({ task }: any) => {
    )
 }
 
-export const DeleteTaskModal = ({ project: { id, title } }: any) => {
-  const { onClose } = useModal()
+export const DeleteTaskModal = ({ project: { id, title }, mutation }: any) => {
+  const modal = useModal()
 
   const deleteProjectMutation = useMutation(deleteTask, {
     onSuccess: (response) => {
       if (response.data.ack === 1) {
-        onClose()
+        modal?.onClose()
+        mutation()
       } else {
         throw new Error(response.data.message)
       }
@@ -343,7 +350,7 @@ export const DeleteTaskModal = ({ project: { id, title } }: any) => {
       <Button onClick={handleDeleteProject} variant="contained">
         Delete
       </Button>
-      <Button onClick={onClose} variant="outlined">
+      <Button onClick={() => modal?.onClose()} variant="outlined">
         Cancel
       </Button>
     </>
@@ -352,11 +359,11 @@ export const DeleteTaskModal = ({ project: { id, title } }: any) => {
 
 // User Modals
 export const UserRegisterModal = () => {
-  const { onClose } = useModal()
+  const modal= useModal()
   return (
     <>
       <Typography variant="h5">User successfully registered. Please login with the credentials.</Typography>
-      <Button onClick={onClose} variant="outlined">
+      <Button onClick={() => modal?.onClose()} variant="outlined">
         Okay
       </Button>
     </>
@@ -364,11 +371,11 @@ export const UserRegisterModal = () => {
 }
 
 export const UserUpdateModal = () => {
-  const { onClose } = useModal()
+  const modal = useModal()
   return (
     <>
       <Typography variant="h5">User successfully updated.</Typography>
-      <Button onClick={onClose} variant="outlined">
+      <Button onClick={() => modal?.onClose()} variant="outlined">
         Okay
       </Button>
     </>

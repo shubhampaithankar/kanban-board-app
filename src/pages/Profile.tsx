@@ -9,13 +9,13 @@ import useModal from '../hooks/useModal';
 import { UserUpdateModal } from '../components/Modals';
 
 export default function Profile() {
-  const { getUser } = useAuth()
-  const user = getUser()
+  const auth = useAuth()
+  const user: any = auth?.getUser() || null
 
-  const { onOpen } = useModal()
+  const modal = useModal()
 
   // Use a single state object for form controls
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({
     username: '',
     email: '',
     dob: '',
@@ -34,7 +34,7 @@ export default function Profile() {
 
   const handleChange = (e: any) => {
     const { target: { name, value } } = e
-    setFormData(prev => ({ ...prev, [name]: value }))
+    setFormData((prev: any) => ({ ...prev, [name]: value }))
     setIsTouched(true)
   }
     
@@ -45,7 +45,7 @@ export default function Profile() {
           onSuccess: (response) => {
               if (response?.data.ack === 1) {
                 clearForm()
-                onOpen({
+                modal?.onOpen({
                   title: 'Success',
                   body: <UserUpdateModal />
                 })
@@ -102,6 +102,7 @@ export default function Profile() {
                     fullWidth
                     type='date'
                     value={formData.dob}
+                    InputLabelProps={{ shrink: true }}
                     onChange={handleChange}
                     sx={{ margin: '0.5rem 0.25rem' }}
                 />

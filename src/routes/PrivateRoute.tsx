@@ -1,7 +1,7 @@
+import { Navigate } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 
 export default function PrivateRoute ({ component }: any) {
-    const { isAuthenticated } = useAuth()
-    return component
-    // return !isAuthenticated ? <Navigate to='/auth' /> : <>{ component }</>
+    const auth = useAuth()
+    return !auth?.isAuthenticated ? <Navigate to='/auth' /> : <>{ component }</>
 };

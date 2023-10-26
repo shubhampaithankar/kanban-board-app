@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, createContext, ReactNode, useContext } from "react";
+import { ModalType } from "../utils/types";
 
-export default function useModal() {
+export const useModalProvider = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [modalData, setModalData] = useState<any>({
         title: '',
@@ -23,4 +24,9 @@ export default function useModal() {
     return {
         isOpen, modalData, onOpen, onClose
     }
+}
+
+export const ModalContext = createContext<ModalType | null>(null)
+export default function useModal() {
+    return useContext(ModalContext)
 }

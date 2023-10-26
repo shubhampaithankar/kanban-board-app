@@ -2,10 +2,10 @@ import React from 'react'
 import useAuth from '../hooks/useAuth'
 
 export default function Home() {
-  const {isAuthenticated} = useAuth()
+  const auth = useAuth()
   return (
     <>
-      { isAuthenticated ? <>Go to My Projects</> : <>The Kanban Board</> }
+      { auth?.isAuthenticated ? <>Go to My Projects</> : <>The Kanban Board</> }
     </>
   )
 }

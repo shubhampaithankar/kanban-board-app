@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Typography, Grid, Paper, List, ListItem, Box, Button, ButtonGroup } from '@mui/material';
 import { DragDropContext, Droppable, Draggable,  } from 'react-beautiful-dnd';
 import { useMutation } from 'react-query';
 import useAuth from '../hooks/useAuth';
 import { getTasks, updateTask } from '../services/ApiService';
-import { Link, useParams } from 'react-router-dom';
 import useModal from '../hooks/useModal';
 import { CreateTaskModal, DeleteTaskModal, UpdateTaskModal } from '../components/Modals';
 
@@ -12,17 +12,17 @@ const KanbanBoard = () => {
   const columns = ['To Do', 'In Progress', 'Done']
   const [tasks, setTasks] = useState<any>([]);
 
-  const { getToken } = useAuth()
-  const token = getToken()
+  const auth = useAuth()
+  const token = auth?.getToken()
   
   const { id } = useParams()
-  const { onOpen } = useModal()
+  const modal = useModal()
 
-  const openCreateModal = () => onOpen({ title: 'Create Modal', body: <CreateTaskModal /> })
-  const openEditModal = (task: any) => onOpen({ title: 'Edit Modal', body: <UpdateTaskModal task={task} />})
-  const openDeleteModal = (task: any) => onOpen({ title: 'Delete', body: <DeleteTaskModal task={task} />})
+  const openCreateModal = () => modal?.onOpen({ title: 'Create Task', body: <CreateTaskModal mutate={getMutation} /> })
+  const openEditModal = (task: any) => modal?.onOpen({ title: 'Edit Task', body: <UpdateTaskModal task={task} mutate={getMutation} />})
+  const openDeleteModal = (task: any) => modal?.onOpen({ title: 'Delete Task', body: <DeleteTaskModal task={task} mutate={getMutation} />})
   
-  const { mutate: getMutation, isLoading } = useMutation(getTasks, { useErrorBoundary: true })
+  const { mutate: getMutation, isLoading, data: response, isSuccess } = useMutation(getTasks, { useErrorBoundary: true })
   const { mutate: updateMutation } = useMutation(updateTask, { useErrorBoundary: true })
 
   const onDragEnd = (result: any) => {
@@ -35,7 +35,7 @@ const KanbanBoard = () => {
         if (response?.data.ack === 1) {
           setTasks((prev: any) => prev.map((task: any) => (task._id === taskId ? {...task, status: destinationId } : task)))
         } else {
-          throw new Error(response.data.message)
+          throw new Error(response?.data.message)
         }
       }, 
     })
@@ -43,17 +43,19 @@ const KanbanBoard = () => {
   
   useEffect(() => {
     if (token && id) {
-      getMutation({ id }, {
-        onSuccess: (response) => {
-          if (response?.data.ack === 1) {
-            setTasks(response?.data.tasks);
-          } else {
-            throw new Error(response.data.message)
-          }
-        }
-      })
+      getMutation({ id })
     }
   }, [token, getMutation, id])
+
+  useEffect(() => {
+    if (isSuccess) {
+      if (response?.data.ack === 1) {
+        setTasks(response?.data.tasks);
+      } else {
+        throw new Error(response?.data.message)
+      }
+    }
+  }, [isSuccess, response?.data.ack, response?.data.tasks, response?.data.message])
 
   return (
     <>

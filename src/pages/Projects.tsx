@@ -12,34 +12,35 @@ export default function Projects() {
   const [projects, setProjects] = useState<any>([]);
 
   const navigate = useNavigate()
-  const { onOpen } = useModal()
+  const modal = useModal()
 
   const goToProjects = (id: any) => navigate(`/projects/${id}`)
-  const openCreateModal = () => onOpen({ title: 'Create Modal', body: <CreateProjectModal /> })
-  const openEditModal = (project: any) => onOpen({ title: 'Edit Modal', body: <UpdateProjectModal project={project} />})
-  const openDeleteModal = (project: any) => onOpen({ title: 'Delete', body: <DeleteProjectModal project={project} />})
+  const openCreateModal = () => modal?.onOpen({ title: 'Create Project', body: <CreateProjectModal mutate={mutate}/> })
+  const openEditModal = (project: any) => modal?.onOpen({ title: 'Edit Project', body: <UpdateProjectModal project={project} mutate={mutate} />})
+  const openDeleteModal = (project: any) => modal?.onOpen({ title: 'Delete Project', body: <DeleteProjectModal project={project} mutate={mutate} />})
 
-  const { getToken } = useAuth()
-  const token = getToken()
+  const auth = useAuth()
+  const token = auth?.getToken()
 
-  const { mutate, isLoading } = useMutation('projects', getUserProjects, {
+  const { mutate, isLoading, isSuccess, data: response } = useMutation('projects', getUserProjects, {
     useErrorBoundary: true,
   })
 
   useEffect(() => {
     if (token) {
-      mutate(undefined, {
-         onSettled: (response)  => {
-          if (response?.data.ack === 1) {
-            setProjects(response?.data.projects);
-          } else {
-            throw new Error(response?.data.message)
-          }
-         }
-      })
+      mutate()
     }
   }, [token, mutate])
   
+  useEffect(() => {
+    if (isSuccess) {
+      if (response?.data.ack === 1) {
+        setProjects(response?.data.projects);
+      } else {
+        throw new Error(response?.data.message)
+      }
+    }
+  }, [isSuccess, response?.data.ack, response?.data.message, response?.data.projects])
 
   return (
     <>

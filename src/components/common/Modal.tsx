@@ -1,27 +1,24 @@
-import { Grid, Typography, Modal as ReactModal } from '@mui/material';
+import { Grid, Typography, Modal as ReactModal, Paper } from '@mui/material';
 import useModal from "../../hooks/useModal";
-import { useEffect } from 'react';
 
 export default function Modal() {
-    const { isOpen, modalData, onClose } = useModal()
-
-    useEffect(() => {
-        console.log(isOpen)
-    }, [isOpen])
+    const modal = useModal()
 
     return (
         <>
-            <ReactModal open={isOpen} onClose={onClose}>
-                <Grid container direction='column' justifyContent="center" alignItems="center">
-                    <Grid item xs={4}>
-                        <Typography variant="h1">
-                            { modalData.title }
-                        </Typography>
+            <ReactModal open={!!modal?.isOpen} onClose={modal?.onClose} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100%' }}>
+                    <Grid container direction='column' justifyContent="center" alignItems="center">
+                        <Paper sx={{ padding: '1rem' }}>
+                            <Grid item xs={4}>
+                                <Typography variant="h5">
+                                    { modal?.modalData.title }
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                                { modal?.modalData.body }
+                            </Grid>
+                        </Paper>
                     </Grid>
-                    <Grid item xs={8}>
-                        { modalData.body }
-                    </Grid>
-                </Grid>
             </ReactModal>
         </>
     )

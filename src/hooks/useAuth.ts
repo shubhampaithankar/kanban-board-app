@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
 import { apiInstance, getUserDetails } from '../services/ApiService';
+import { AuthType } from '../utils/types';
 
-export default function useAuth() {
+export const useAuthProvider = () => {
   
   const [token, setToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -67,4 +68,10 @@ export default function useAuth() {
     getUser,
     logoutUser
   }
+}
+
+export const AuthContext = createContext<AuthType | null>(null)
+
+export default function useAuth() {
+  return useContext(AuthContext)
 }

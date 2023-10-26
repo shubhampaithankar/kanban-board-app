@@ -18,10 +18,10 @@ export default function Auth() {
     region: ''
   })
 
-  const { setToken, isAuthenticated } = useAuth()
+  const auth = useAuth()
   const navigate = useNavigate()
 
-  const { onOpen } = useModal()
+  const modal = useModal()
 
   const handleChange = (e: any) => {
     const { target: { name, value } } = e
@@ -38,9 +38,9 @@ export default function Auth() {
       onSuccess: (response) => {
         if (response?.data.ack === 1) {
           if (!isRegistering) {
-            setToken(response?.data.token)
+            auth?.setToken(response?.data.token)
           } else {
-            onOpen({
+            modal?.onOpen({
               title: 'Success',
               body: <UserRegisterModal />
             })
@@ -60,10 +60,10 @@ export default function Auth() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (auth?.isAuthenticated) {
       navigate('/projects')
     }
-  }, [isAuthenticated, navigate])
+  }, [auth?.isAuthenticated, navigate])
 
   return (
     <Grid container spacing={0} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100%', flexDirection: 'column' }}>
