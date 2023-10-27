@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 
-const API_URL = `http://localhost:3001/api/`
+// const API_URL = `http://localhost:3001/api/`
+const API_URL = `https://kanban-board-api-k7ei.onrender.com/api/`
 
 export const apiInstance = axios.create({
     headers: {
