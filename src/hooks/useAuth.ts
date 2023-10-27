@@ -4,11 +4,10 @@ import { AuthType } from '../utils/types';
 
 export const useAuthProvider = () => {
   
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState<string| null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
-  const setAuthToken = (token: any) =>  setToken(token);
   const getToken = () => localStorage.getItem('token')
   const getUser = () => JSON.parse(localStorage.getItem('user') as string)
 
@@ -20,7 +19,7 @@ export const useAuthProvider = () => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    if (storedToken) setAuthToken(storedToken);
+    if (storedToken) setToken(storedToken);
 
     const storedUser = JSON.parse(localStorage.getItem('user') as string)
     if (storedUser) setUser(storedUser)
@@ -66,6 +65,7 @@ export const useAuthProvider = () => {
     setToken,
     getToken,
     getUser,
+    setUser,
     logoutUser
   }
 }

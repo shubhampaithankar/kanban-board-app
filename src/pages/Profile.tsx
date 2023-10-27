@@ -23,11 +23,6 @@ export default function Profile() {
   });
   const [isTouched, setIsTouched] = useState(false)
 
-  const clearForm = () => {
-    setFormData({ username: '', dob: '', email: '', region: '' })
-    setIsTouched(false)
-  }
-
   const { mutate } = useMutation(updateUser,{
     useErrorBoundary: true
   })
@@ -44,11 +39,12 @@ export default function Profile() {
       mutate(formData, {
           onSuccess: (response) => {
               if (response?.data.ack === 1) {
-                clearForm()
+                auth?.setUser((prev: any) => ({ ...prev, ...formData }))
                 modal?.onOpen({
                   title: 'Success',
                   body: <UserUpdateModal />
                 })
+                setIsTouched(false)
               } else {
                 throw new Error(response.data.message)
               }

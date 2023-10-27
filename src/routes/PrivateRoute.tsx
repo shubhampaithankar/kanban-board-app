@@ -3,5 +3,5 @@ import useAuth from "../hooks/useAuth"
 
 export default function PrivateRoute ({ component }: any) {
     const auth = useAuth()
-    return !auth?.isAuthenticated ? <Navigate to='/auth' /> : <>{ component }</>
+    return auth?.isAuthenticated ? component : <Navigate to='/' />
 };

@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Typography, TextField, Button, Select, MenuItem } from "@mui/material";
+import { Typography, TextField, Button, Select, MenuItem, ButtonGroup, Box } from "@mui/material";
 import { useMutation } from "react-query";
 import { createProject, createTask, deleteProject, deleteTask, updateProject, updateTask } from "../services/ApiService";
 import useModal from "../hooks/useModal";
+
+const ButtonStyles = { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'unset', marginTop: '1rem' }
 
 // Project Modals
 export const CreateProjectModal = ({ mutate }: any) => {
@@ -29,13 +31,16 @@ export const CreateProjectModal = ({ mutate }: any) => {
      setFormData((prev: any) => ({ ...prev, [name]: value }))
   };
 
-  const handleSubmit = () => createProjectMutation.mutate(formData)
+  const handleSubmit = (e: any) => {
+    e.preventDefault()
+    createProjectMutation.mutate(formData)
+  }
 
   return (
-    <>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
        <form onSubmit={handleSubmit} style={{ padding: '0.5rem' }}>
           <TextField
-            label="Username"
+            label="Name"
             variant="outlined"
             type="text"
             name='name'
@@ -52,20 +57,22 @@ export const CreateProjectModal = ({ mutate }: any) => {
             fullWidth
             value={formData.description}
             onChange={handleChange}
-            sx={{ margin: '0.25rem' }} required
+            sx={{ margin: '0.25rem' }}
           />
-        <Button type='submit' variant="contained">
-          Create
-        </Button>
-        <Button onClick={() => modal?.onClose()} variant="outlined">
-          Cancel
-        </Button>
+        <ButtonGroup variant="contained" sx={ButtonStyles}>
+          <Button type='submit'>
+            Create
+          </Button>
+          <Button onClick={() => modal?.onClose()} variant="outlined">
+            Cancel
+          </Button>
+        </ButtonGroup>
       </form>
-    </>
+    </Box>
   )
 }
 
-export const UpdateProjectModal = ({ project: { id, name, description }, mutate }: any) => {
+export const UpdateProjectModal = ({ project: { _id: id, name, description }, mutate }: any) => {
 
   const [formData, setFormData] = useState({
    name,
@@ -89,11 +96,13 @@ export const UpdateProjectModal = ({ project: { id, name, description }, mutate 
      setFormData((prev: any) => ({ ...prev, [name]: value }))
   };
 
-  const handleSubmit = () => updateProjectMutation.mutate({ id, data: formData })
+  const handleSubmit = (e: any) => {
+    e.preventDefault()
+    updateProjectMutation.mutate({ id, data: formData })
+  }
 
   return (
     <>
-      <Typography variant="h5">Update Project</Typography>
        <form onSubmit={handleSubmit} style={{ padding: '0.5rem' }}>
           <TextField
             label="Username"
@@ -115,18 +124,20 @@ export const UpdateProjectModal = ({ project: { id, name, description }, mutate 
             onChange={handleChange}
             sx={{ margin: '0.25rem' }} required
           />
-        <Button type='submit' variant="contained">
-          Delete
-        </Button>
-        <Button onClick={() => modal?.onClose()} variant="outlined">
-          Cancel
-        </Button>
+          <ButtonGroup variant="contained" sx={ButtonStyles}>
+            <Button type='submit' variant="contained">
+              Update
+            </Button>
+            <Button onClick={() => modal?.onClose()} variant="outlined">
+              Cancel
+            </Button>
+          </ButtonGroup>
       </form>
     </>
   )
 }
 
-export const DeleteProjectModal = ({ project: { id, name }, mutate }: any) => {
+export const DeleteProjectModal = ({ project: { _id: id, name }, mutate }: any) => {
   const modal = useModal()
 
   const deleteProjectMutation = useMutation(deleteProject, {
@@ -140,23 +151,28 @@ export const DeleteProjectModal = ({ project: { id, name }, mutate }: any) => {
     },
   })
 
-  const handleDeleteProject = () =>  deleteProjectMutation.mutate({ id })
+  const handleDeleteProject = (e: any) =>  {
+    e.preventDefault()
+    deleteProjectMutation.mutate({ id })
+  }
 
   return (
     <>
       <Typography variant="h5">Are you sure you want to delete {name}?</Typography>
-      <Button onClick={handleDeleteProject} variant="contained">
-        Delete
-      </Button>
-      <Button onClick={() => modal?.onClose()} variant="outlined">
-        Cancel
-      </Button>
+      <ButtonGroup variant="contained" sx={ButtonStyles}>
+        <Button onClick={handleDeleteProject} variant="contained" color="error">
+          Delete
+        </Button>
+        <Button onClick={() => modal?.onClose()} variant="outlined">
+          Cancel
+        </Button>
+      </ButtonGroup>
     </>
   )
 }
 
 // Task Modals 
-export const CreateTaskModal = ({ mutation }: any) => {
+export const CreateTaskModal = ({ mutation, id }: any) => {
   const priorities = ['Low', 'Medium', 'High']
   const [formData, setFormData] = useState({
     title: '',
@@ -171,7 +187,7 @@ export const CreateTaskModal = ({ mutation }: any) => {
      onSuccess: (response) => {
        if (response.data.ack === 1) {
         modal?.onClose()
-         mutation()
+        mutation({ id })
        } else {
         throw new Error(response.data.message)
       }
@@ -183,7 +199,10 @@ export const CreateTaskModal = ({ mutation }: any) => {
       setFormData((prev: any) => ({ ...prev, [name]: value }))
    };
  
-   const handleSubmit = () => mutate(formData)
+   const handleSubmit = (e: any) => {
+    e.preventDefault()
+    mutate({ id, data: formData })
+   }
  
    return (
      <>
@@ -208,7 +227,7 @@ export const CreateTaskModal = ({ mutation }: any) => {
              fullWidth
              value={formData.description}
              onChange={handleChange}
-             sx={{ margin: '0.25rem' }} required
+             sx={{ margin: '0.25rem' }}
              disabled={isLoading}
            />
            <Select
@@ -220,7 +239,7 @@ export const CreateTaskModal = ({ mutation }: any) => {
              sx={{ margin: '0.25rem' }}
              disabled={isLoading}
            >
-            { priorities.map((p: string) => <MenuItem value={p}>{p}</MenuItem>) }
+            { priorities.map((p: string) => <MenuItem key={p} value={p}>{p}</MenuItem>) }
            </Select>
            <TextField
              label="Due Date"
@@ -234,18 +253,20 @@ export const CreateTaskModal = ({ mutation }: any) => {
              sx={{ margin: '0.25rem' }} required
              disabled={isLoading}
            />
-         <Button type='submit' variant="contained" disabled={isLoading}>
-           Create
-         </Button>
-         <Button onClick={() => modal?.onClose()} variant="outlined" disabled={isLoading}>
-           Cancel
-         </Button>
+          <ButtonGroup variant="contained" sx={ButtonStyles}>
+            <Button type='submit' variant="contained" disabled={isLoading}>
+              Create
+            </Button>
+            <Button onClick={() => modal?.onClose()} variant="outlined" disabled={isLoading}>
+              Cancel
+            </Button>
+          </ButtonGroup>
        </form>
      </>
    )
 }
 
-export const UpdateTaskModal = ({ task, mutation }: any) => {
+export const UpdateTaskModal = ({ task, mutation, id: projectId }: any) => {
   const priorities = ['Low', 'Medium', 'High']
   const [formData, setFormData] = useState(task);
    const modal = useModal()
@@ -253,11 +274,12 @@ export const UpdateTaskModal = ({ task, mutation }: any) => {
    const { mutate, isLoading } = useMutation(updateTask, {
      onSuccess: (response) => {
        if (response.data.ack === 1) {
-         modal?.onClose()
-         mutation()
+         mutation({ id: projectId })
        } else {
         throw new Error(response.data.message)
       }
+     }, onSettled: () => {
+        modal?.onClose()
      },
    })
  
@@ -266,7 +288,10 @@ export const UpdateTaskModal = ({ task, mutation }: any) => {
       setFormData((prev: any) => ({ ...prev, [name]: value }))
    };
  
-   const handleSubmit = () => mutate(formData)
+   const handleSubmit = (e: any) => {
+    e.preventDefault()
+    mutate({ id: task._id, data: task })
+   }
  
    return (
      <>
@@ -302,6 +327,7 @@ export const UpdateTaskModal = ({ task, mutation }: any) => {
              onChange={handleChange}
              sx={{ margin: '0.25rem' }}
              disabled={isLoading}
+             required
            >
             { priorities.map((p: string) => <MenuItem value={p}>{p}</MenuItem>) }
            </Select>
@@ -317,25 +343,27 @@ export const UpdateTaskModal = ({ task, mutation }: any) => {
              sx={{ margin: '0.25rem' }} required
              disabled={isLoading}
            />
-         <Button type='submit' variant="contained" disabled={isLoading}>
-           Create
-         </Button>
-         <Button onClick={() => modal?.onClose()} variant="outlined" disabled={isLoading}>
-           Cancel
-         </Button>
+          <ButtonGroup variant="contained" sx={ButtonStyles}>
+            <Button type='submit' variant="contained" disabled={isLoading}>
+              Update
+            </Button>
+            <Button onClick={() => modal?.onClose()} variant="outlined" disabled={isLoading}>
+              Cancel
+            </Button>
+          </ButtonGroup>
        </form>
      </>
    )
 }
 
-export const DeleteTaskModal = ({ project: { id, title }, mutation }: any) => {
+export const DeleteTaskModal = ({ task: { _id: id, title }, mutation, id: projectId }: any) => {
   const modal = useModal()
 
   const deleteProjectMutation = useMutation(deleteTask, {
     onSuccess: (response) => {
       if (response.data.ack === 1) {
         modal?.onClose()
-        mutation()
+        mutation({ id: projectId })
       } else {
         throw new Error(response.data.message)
       }
@@ -347,12 +375,14 @@ export const DeleteTaskModal = ({ project: { id, title }, mutation }: any) => {
   return (
     <>
       <Typography variant="h5">Are you sure you want to delete {title}?</Typography>
-      <Button onClick={handleDeleteProject} variant="contained">
-        Delete
-      </Button>
-      <Button onClick={() => modal?.onClose()} variant="outlined">
-        Cancel
-      </Button>
+      <ButtonGroup variant="contained" sx={ButtonStyles}>
+        <Button onClick={handleDeleteProject} variant="contained" color="error">
+          Delete
+        </Button>
+        <Button onClick={() => modal?.onClose()} variant="outlined">
+          Cancel
+        </Button>
+      </ButtonGroup>
     </>
   )
 }

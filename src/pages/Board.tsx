@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Typography, Grid, Paper, List, ListItem, Box, Button, ButtonGroup } from '@mui/material';
 import { DragDropContext, Droppable, Draggable,  } from 'react-beautiful-dnd';
-import { useMutation } from 'react-query';
+import { QueryClient, useMutation } from 'react-query';
 import useAuth from '../hooks/useAuth';
-import { getTasks, updateTask } from '../services/ApiService';
 import useModal from '../hooks/useModal';
+import { getTasks, updateTask } from '../services/ApiService';
 import { CreateTaskModal, DeleteTaskModal, UpdateTaskModal } from '../components/Modals';
+
+const queryClient = new QueryClient()
 
 const KanbanBoard = () => {
   const columns = ['To Do', 'In Progress', 'Done']
@@ -18,11 +20,11 @@ const KanbanBoard = () => {
   const { id } = useParams()
   const modal = useModal()
 
-  const openCreateModal = () => modal?.onOpen({ title: 'Create Task', body: <CreateTaskModal mutate={getMutation} /> })
-  const openEditModal = (task: any) => modal?.onOpen({ title: 'Edit Task', body: <UpdateTaskModal task={task} mutate={getMutation} />})
-  const openDeleteModal = (task: any) => modal?.onOpen({ title: 'Delete Task', body: <DeleteTaskModal task={task} mutate={getMutation} />})
+  const openCreateModal = () => modal?.onOpen({ title: 'Create Task', body: <CreateTaskModal mutation={getMutation} id={id} /> })
+  const openEditModal = (task: any) => modal?.onOpen({ title: 'Edit Task', body: <UpdateTaskModal task={task} mutation={getMutation} id={id} />})
+  const openDeleteModal = (task: any) => modal?.onOpen({ title: 'Delete Task', body: <DeleteTaskModal task={task} mutation={getMutation} id={id} />})
   
-  const { mutate: getMutation, isLoading, data: response, isSuccess } = useMutation(getTasks, { useErrorBoundary: true })
+  const { mutate: getMutation, isLoading } = useMutation('getTasks', getTasks, { useErrorBoundary: true,  })
   const { mutate: updateMutation } = useMutation(updateTask, { useErrorBoundary: true })
 
   const onDragEnd = (result: any) => {
@@ -43,19 +45,22 @@ const KanbanBoard = () => {
   
   useEffect(() => {
     if (token && id) {
-      getMutation({ id })
+      getMutation({ id }, {
+        onSuccess: (response) => {
+          try {
+            if (response?.data.ack === 1) {
+              setTasks(response?.data.tasks);
+              return queryClient.invalidateQueries('getTasks')
+            } else {
+              throw new Error(response?.data.message)
+            } 
+          } catch (error) {
+          }
+        }
+      })
     }
   }, [token, getMutation, id])
 
-  useEffect(() => {
-    if (isSuccess) {
-      if (response?.data.ack === 1) {
-        setTasks(response?.data.tasks);
-      } else {
-        throw new Error(response?.data.message)
-      }
-    }
-  }, [isSuccess, response?.data.ack, response?.data.tasks, response?.data.message])
 
   return (
     <>
@@ -110,7 +115,6 @@ const KanbanBoard = () => {
                                         <Button onClick={() => openDeleteModal(task)}>Delete</Button>
                                       </ButtonGroup>
                                     </Box>
-
                                     { task.labels && task.labels.length > 0 && (
                                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         { 

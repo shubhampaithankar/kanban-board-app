@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useMutation } from 'react-query';
+import { QueryClient, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableHead, TableRow, TableCell, TableBody, Button, Grid, Typography, Link, ButtonGroup, Box } from '@mui/material';
 import { getUserProjects } from '../services/ApiService';
@@ -7,6 +7,8 @@ import { getUserProjects } from '../services/ApiService';
 import useModal from '../hooks/useModal';
 import useAuth from '../hooks/useAuth';
 import { CreateProjectModal, DeleteProjectModal, UpdateProjectModal } from '../components/Modals';
+
+const queryClient = new QueryClient()
 
 export default function Projects() {
   const [projects, setProjects] = useState<any>([]);
@@ -22,25 +24,24 @@ export default function Projects() {
   const auth = useAuth()
   const token = auth?.getToken()
 
-  const { mutate, isLoading, isSuccess, data: response } = useMutation('projects', getUserProjects, {
+  const { mutate, isLoading } = useMutation('getProjects', getUserProjects, {
     useErrorBoundary: true,
   })
 
   useEffect(() => {
     if (token) {
-      mutate()
+      mutate(undefined, {
+        onSuccess: (response) => {
+          if (response?.data.ack === 1) {
+            setProjects(response?.data.projects);
+            return queryClient.invalidateQueries('getProjects')
+          } else {
+            throw new Error(response?.data.message)
+          }
+        }
+      })
     }
   }, [token, mutate])
-  
-  useEffect(() => {
-    if (isSuccess) {
-      if (response?.data.ack === 1) {
-        setProjects(response?.data.projects);
-      } else {
-        throw new Error(response?.data.message)
-      }
-    }
-  }, [isSuccess, response?.data.ack, response?.data.message, response?.data.projects])
 
   return (
     <>

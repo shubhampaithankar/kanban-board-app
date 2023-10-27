@@ -31,6 +31,7 @@ export type AuthType = {
     setToken: React.Dispatch<any>
     getToken: () => void
     getUser: () => void
+    setUser: React.Dispatch<any>
     logoutUser: () => void
 }
 
