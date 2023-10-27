@@ -17,19 +17,21 @@ export default function Projects() {
   const modal = useModal()
 
   const goToProjects = (id: any) => navigate(`/projects/${id}`)
-  const openCreateModal = () => modal?.onOpen({ title: 'Create Project', body: <CreateProjectModal mutate={mutate}/> })
-  const openEditModal = (project: any) => modal?.onOpen({ title: 'Edit Project', body: <UpdateProjectModal project={project} mutate={mutate} />})
-  const openDeleteModal = (project: any) => modal?.onOpen({ title: 'Delete Project', body: <DeleteProjectModal project={project} mutate={mutate} />})
+  const openCreateModal = () => modal?.onOpen({ title: 'Create Project', body: <CreateProjectModal mutation={mutate}/> })
+  const openEditModal = (project: any) => modal?.onOpen({ title: 'Edit Project', body: <UpdateProjectModal project={project} mutation={mutate} />})
+  const openDeleteModal = (project: any) => modal?.onOpen({ title: 'Delete Project', body: <DeleteProjectModal project={project} mutation={mutate} />})
 
   const auth = useAuth()
   const token = auth?.getToken()
 
-  const { mutate, isLoading } = useMutation('getProjects', getUserProjects, {
+  const { mutate, isLoading, isSuccess } = useMutation('getProjects', getUserProjects, {
     useErrorBoundary: true,
   })
 
+  console.log()
+
   useEffect(() => {
-    if (token) {
+    if (token && !isSuccess) {
       mutate(undefined, {
         onSuccess: (response) => {
           if (response?.data.ack === 1) {
@@ -41,7 +43,9 @@ export default function Projects() {
         }
       })
     }
-  }, [token, mutate])
+  }, [token, mutate, isSuccess])
+
+  useEffect(() => {}, [projects])
 
   return (
     <>

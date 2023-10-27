@@ -7,7 +7,7 @@ import useModal from "../hooks/useModal";
 const ButtonStyles = { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'unset', marginTop: '1rem' }
 
 // Project Modals
-export const CreateProjectModal = ({ mutate }: any) => {
+export const CreateProjectModal = ({ mutation }: any) => {
 
   const [formData, setFormData] = useState({
    name: '',
@@ -19,7 +19,7 @@ export const CreateProjectModal = ({ mutate }: any) => {
     onSuccess: (response) => {
       if (response.data.ack === 1) {
         modal?.onClose()
-        mutate()
+        mutation()
       } else {
         throw new Error(response.data.message)
       }
@@ -72,7 +72,7 @@ export const CreateProjectModal = ({ mutate }: any) => {
   )
 }
 
-export const UpdateProjectModal = ({ project: { _id: id, name, description }, mutate }: any) => {
+export const UpdateProjectModal = ({ project: { _id: id, name, description }, mutation }: any) => {
 
   const [formData, setFormData] = useState({
    name,
@@ -84,7 +84,7 @@ export const UpdateProjectModal = ({ project: { _id: id, name, description }, mu
     onSuccess: (response) => {
       if (response.data.ack === 1) {
         modal?.onClose()
-        mutate()
+        mutation()
       } else {
         throw new Error(response.data.message)
       }
@@ -137,14 +137,14 @@ export const UpdateProjectModal = ({ project: { _id: id, name, description }, mu
   )
 }
 
-export const DeleteProjectModal = ({ project: { _id: id, name }, mutate }: any) => {
+export const DeleteProjectModal = ({ project: { _id: id, name }, mutation }: any) => {
   const modal = useModal()
 
   const deleteProjectMutation = useMutation(deleteProject, {
     onSuccess: (response) => {
       if (response.data.ack === 1) {
         modal?.onClose()
-        mutate()
+        mutation()
       } else {
         throw new Error(response.data.message)
       }
@@ -290,7 +290,7 @@ export const UpdateTaskModal = ({ task, mutation, id: projectId }: any) => {
  
    const handleSubmit = (e: any) => {
     e.preventDefault()
-    mutate({ id: task._id, data: task })
+    mutate({ id: task._id, data: task, projectId })
    }
  
    return (

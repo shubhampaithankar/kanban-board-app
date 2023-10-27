@@ -24,7 +24,7 @@ const KanbanBoard = () => {
   const openEditModal = (task: any) => modal?.onOpen({ title: 'Edit Task', body: <UpdateTaskModal task={task} mutation={getMutation} id={id} />})
   const openDeleteModal = (task: any) => modal?.onOpen({ title: 'Delete Task', body: <DeleteTaskModal task={task} mutation={getMutation} id={id} />})
   
-  const { mutate: getMutation, isLoading } = useMutation('getTasks', getTasks, { useErrorBoundary: true,  })
+  const { mutate: getMutation, isLoading, isSuccess } = useMutation('getTasks', getTasks, { useErrorBoundary: true,  })
   const { mutate: updateMutation } = useMutation(updateTask, { useErrorBoundary: true })
 
   const onDragEnd = (result: any) => {
@@ -44,7 +44,7 @@ const KanbanBoard = () => {
   };
   
   useEffect(() => {
-    if (token && id) {
+    if (token && id && !isSuccess) {
       getMutation({ id }, {
         onSuccess: (response) => {
           try {
@@ -59,7 +59,7 @@ const KanbanBoard = () => {
         }
       })
     }
-  }, [token, getMutation, id])
+  }, [token, getMutation, id, isSuccess])
 
 
   return (

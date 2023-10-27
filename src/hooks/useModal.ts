@@ -1,4 +1,4 @@
-import { useState, createContext, ReactNode, useContext } from "react";
+import { useState, createContext, useContext } from "react";
 import { ModalType } from "../utils/types";
 
 export const useModalProvider = () => {
