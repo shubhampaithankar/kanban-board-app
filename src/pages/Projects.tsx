@@ -28,8 +28,6 @@ export default function Projects() {
     useErrorBoundary: true,
   })
 
-  console.log()
-
   useEffect(() => {
     if (token && !isSuccess) {
       mutate(undefined, {
@@ -44,8 +42,6 @@ export default function Projects() {
       })
     }
   }, [token, mutate, isSuccess])
-
-  useEffect(() => {}, [projects])
 
   return (
     <>

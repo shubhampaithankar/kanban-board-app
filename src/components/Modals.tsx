@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Typography, TextField, Button, Select, MenuItem, ButtonGroup, Box } from "@mui/material";
+import { Typography, TextField, Button, MenuItem, ButtonGroup, Box } from "@mui/material";
 import { useMutation } from "react-query";
 import { createProject, createTask, deleteProject, deleteTask, updateProject, updateTask } from "../services/ApiService";
 import useModal from "../hooks/useModal";
@@ -230,7 +230,7 @@ export const CreateTaskModal = ({ mutation, id }: any) => {
              sx={{ margin: '0.25rem' }}
              disabled={isLoading}
            />
-           <Select
+           <TextField
              label='Priority'
              value={formData.priority}
              name="priority"
@@ -238,9 +238,10 @@ export const CreateTaskModal = ({ mutation, id }: any) => {
              onChange={handleChange}
              sx={{ margin: '0.25rem' }}
              disabled={isLoading}
+             select
            >
             { priorities.map((p: string) => <MenuItem key={p} value={p}>{p}</MenuItem>) }
-           </Select>
+           </TextField>
            <TextField
              label="Due Date"
              variant="outlined"
@@ -319,7 +320,7 @@ export const UpdateTaskModal = ({ task, mutation, id: projectId }: any) => {
              sx={{ margin: '0.25rem' }} required
              disabled={isLoading}
            />
-           <Select
+           <TextField
              label='Priority'
              value={formData.priority}
              name="priority"
@@ -327,10 +328,11 @@ export const UpdateTaskModal = ({ task, mutation, id: projectId }: any) => {
              onChange={handleChange}
              sx={{ margin: '0.25rem' }}
              disabled={isLoading}
+             select
              required
            >
-            { priorities.map((p: string) => <MenuItem value={p}>{p}</MenuItem>) }
-           </Select>
+            { priorities.map((p: string) => <MenuItem key={p} value={p}>{p}</MenuItem>) }
+           </TextField>
            <TextField
              label="Due Date"
              variant="outlined"
